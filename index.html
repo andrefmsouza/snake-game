@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <title>Snake Game</title>
+        <link rel="stylesheet" href="./styles.css" />
+    </head>
+    <body>
+
+        <h1>Snake Game</h1>
+        <a href="http://github.com/andrefmsouza/snake-game/">http://github.com/andrefmsouza/snake-game/</a>
+
+        <div class="game">
+            <div>
+                <canvas id="stage"></canvas>
+            </div>
+    
+            <div>
+                <br/>
+                <button onclick="controlSnake(38)">Up</button>
+        
+                <br/>
+                <button onclick="controlSnake(37)">Left</button>
+                <button onclick="start()">Restart</button>
+                <button onclick="controlSnake(39)">Right</button>
+        
+                <br/>
+                <button onclick="controlSnake(40)">Down</button>
+            </div>
+        </div>
+
+
+        <script src="./script.js"></script>
+    </body>
+</html>

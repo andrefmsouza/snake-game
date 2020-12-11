@@ -1,0 +1,41 @@
+html, body{
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+    background-color: #293345;
+    color: white;
+    font-family: monospace;
+}
+
+a{
+    color: white;
+}
+
+.game{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px;
+}
+
+.game div{
+    width: 500px;
+}
+
+canvas{
+    border: 1px solid white;
+}
+
+button{
+    width: 70px;
+    height: 70px;
+    margin: 5px;;
+    border-radius: 50%;
+}
+
+@media( max-width: 1000px ){
+    .game div{
+        width: 100%;
+    }
+}
