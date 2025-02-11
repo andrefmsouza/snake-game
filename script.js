@@ -1,139 +1,206 @@
-window.onload = start;
+class SnakeGame {
+    constructor() {
+        this.config = {
+            canvasWidth: 400,
+            canvasHeight: 400,
+            velocity: 1,
+            gameSpeed: 80,
+            pieceSize: 20,
+            initialTail: 5
+        };
 
-const canvasWidth = 400;
-const canvasHeight = 400;
-const velocity = 1;
-const gameSpeed = 80;
+        this.state = {
+            velocityX: 0,
+            velocityY: 0,
+            positionX: 15,
+            positionY: 15,
+            appleX: 0,
+            appleY: 0,
+            trail: [],
+            tail: this.config.initialTail,
+            direction: "",
+            score: 0,
+            gameInterval: null
+        };
 
-var canvas;
-var ctx;
-var velocityX = velocityY = 0;
-var positionX = 15;
-var positionY = 15;
-var pieceSize = Math.floor( canvasWidth / 20 );
-var quantityPieces = Math.floor( canvasWidth / 20 );
-var appleX = appleY = 0;
-var trail = [];
-var tail = 5;
-var direction = "";
-var gameInterval = null;
+        // Elementos do DOM
+        this.canvas = document.getElementById("stage");
+        this.ctx = this.canvas.getContext("2d");
 
-document.addEventListener("keydown", keyEvent);
+        // Configuração inicial do canvas
+        this.canvas.width = this.config.canvasWidth;
+        this.canvas.height = this.config.canvasHeight;
 
-function start(){
-    //Firts time
-    if( !canvas && !ctx){
-        canvas = document.getElementById("stage");
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        ctx = canvas.getContext("2d");
+        // Bindings
+        this.keyEvent = this.keyEvent.bind(this);
+        this.start = this.start.bind(this);
+        this.runGame = this.runGame.bind(this);
+
+        // Inicialização
+        this.init();
     }
 
+    init() {
+        document.addEventListener("keydown", this.keyEvent);
+        
+        // Configurar botões de controle
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            if (btn.dataset.direction) {
+                btn.addEventListener('click', () => this.handleDirectionButton(btn.dataset.direction));
+            }
+        });
 
-    velocityX = velocityY = 0;
-    positionX = 15;
-    positionY = 15;
-    trail = [];
-    tail = 5;
+        // Configurar botão de reiniciar
+        document.querySelector('.restart-btn').addEventListener('click', () => {
+            // Limpar o intervalo existente
+            if (this.state.gameInterval) {
+                clearInterval(this.state.gameInterval);
+                this.state.gameInterval = null;
+            }
+            
+            // Reiniciar o jogo
+            this.start();
+        });
 
-    appleX = Math.floor( Math.random() * quantityPieces );
-    appleY = Math.floor( Math.random() * quantityPieces );
-
-    console.log(appleX, appleY);
-    
-    if(gameInterval != null) clearInterval(gameInterval);
-
-    gameInterval = setInterval(runGame, gameSpeed);
-}
-
-function runGame(){
-    positionX += velocityX;
-    positionY += velocityY;
-
-    //Canvas border
-    if( positionX < 0 ){
-        positionX = quantityPieces - 1;
+        // Iniciar jogo
+        this.start();
     }
 
-    if( positionX > quantityPieces - 1 ){
-        positionX = 0;
+    start() {
+        // Resetar estado
+        this.state = {
+            velocityX: 0,
+            velocityY: 0,
+            positionX: 15,
+            positionY: 15,
+            appleX: Math.floor(Math.random() * (this.config.canvasWidth / this.config.pieceSize)),
+            appleY: Math.floor(Math.random() * (this.config.canvasHeight / this.config.pieceSize)),
+            trail: [],
+            tail: this.config.initialTail,
+            direction: "",
+            score: 0,
+            gameInterval: null
+        };
+
+        // Limpar intervalo anterior se existir
+        if (this.state.gameInterval) {
+            clearInterval(this.state.gameInterval);
+        }
+
+        // Iniciar novo intervalo
+        this.state.gameInterval = setInterval(this.runGame, this.config.gameSpeed);
     }
 
-    if( positionY < 0 ){
-        positionY = quantityPieces - 1;
-    }
+    runGame() {
+        this.state.positionX += this.state.velocityX;
+        this.state.positionY += this.state.velocityY;
 
-    if( positionY > quantityPieces - 1 ){
-        positionY = 0;
-    }
+        //Canvas border
+        if( this.state.positionX < 0 ){
+            this.state.positionX = this.config.canvasWidth / this.config.pieceSize - 1;
+        }
 
+        if( this.state.positionX > this.config.canvasWidth / this.config.pieceSize - 1 ){
+            this.state.positionX = 0;
+        }
 
-    //Stage
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if( this.state.positionY < 0 ){
+            this.state.positionY = this.config.canvasWidth / this.config.pieceSize - 1;
+        }
 
-    //Apple
-    ctx.fillStyle = "red";
-    ctx.fillRect( appleX * pieceSize, appleY * pieceSize, pieceSize, pieceSize);
+        if( this.state.positionY > this.config.canvasWidth / this.config.pieceSize - 1 ){
+            this.state.positionY = 0;
+        }
 
-    //Snake
-    ctx.fillStyle = "gray";
-    for(let i = 0; i < trail.length; i++){
-        ctx.fillRect( trail[i].x * pieceSize, trail[i].y * pieceSize, pieceSize - 1, pieceSize - 1);
+        //Stage
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        //Game Over
-        if( trail[i].x == positionX && trail[i].y == positionY ){
-            velocityX = velocityY = 0;
-            tail = 5;
+        //Apple
+        this.ctx.fillStyle = "red";
+        this.ctx.fillRect( this.state.appleX * this.config.pieceSize, this.state.appleY * this.config.pieceSize, this.config.pieceSize, this.config.pieceSize);
+
+        //Snake
+        this.ctx.fillStyle = "gray";
+        for(let i = 0; i < this.state.trail.length; i++){
+            this.ctx.fillRect( this.state.trail[i].x * this.config.pieceSize, this.state.trail[i].y * this.config.pieceSize, this.config.pieceSize - 1, this.config.pieceSize - 1);
+
+            //Game Over
+            if( this.state.trail[i].x == this.state.positionX && this.state.trail[i].y == this.state.positionY ){
+                this.state.velocityX = this.state.velocityY = 0;
+                this.state.tail = this.config.initialTail;
+            }
+        }
+
+        this.state.trail.push({x: this.state.positionX, y: this.state.positionY});
+        //Remove the tail end
+        while(this.state.trail.length > this.state.tail){
+            this.state.trail.shift();
+        }
+
+        //Snake eats the apple
+        if( this.state.appleX == this.state.positionX && this.state.appleY == this.state.positionY ){
+            this.state.tail++;
+            this.state.appleX = Math.floor( Math.random() * this.config.canvasWidth / this.config.pieceSize );
+            this.state.appleY = Math.floor( Math.random() * this.config.canvasWidth / this.config.pieceSize );
         }
     }
 
-    trail.push({x: positionX, y: positionY});
-    //Remove the tail end
-    while(trail.length > tail){
-        trail.shift();
+    keyEvent(event) {
+        this.controlSnake(event.keyCode);
     }
 
-    //Snake eats the apple
-    if( appleX == positionX && appleY == positionY ){
-        tail++;
-        appleX = Math.floor( Math.random() * quantityPieces );
-        appleY = Math.floor( Math.random() * quantityPieces );
+    controlSnake(keyCode) {
+        switch (keyCode) {
+            case 37: // Left
+                if( this.state.direction == "right") return;
+                this.state.direction = "left";
+                this.state.velocityX = -this.config.velocity;
+                this.state.velocityY = 0;
+                break;
+            case 38: // up
+                if( this.state.direction == "down") return;
+                this.state.direction = "up";
+                this.state.velocityX = 0;
+                this.state.velocityY = -this.config.velocity;
+                break;
+            case 39: // right
+                if( this.state.direction == "left") return;
+                this.state.direction = "right";
+                this.state.velocityX = this.config.velocity;
+                this.state.velocityY = 0;
+                break;
+            case 40: // down
+                if( this.state.direction == "up") return;
+                this.state.direction = "down";
+                this.state.velocityX = 0;
+                this.state.velocityY = this.config.velocity;
+                break;          
+            default:
+                
+                break;
+        }
+    }
+
+    handleDirectionButton(direction) {
+        this.controlSnake(this.getDirectionKeyCode(direction));
+    }
+
+    getDirectionKeyCode(direction) {
+        switch (direction) {
+            case "up":
+                return 38;
+            case "left":
+                return 37;
+            case "right":
+                return 39;
+            case "down":
+                return 40;
+            default:
+                return null;
+        }
     }
 }
 
-function keyEvent(event){
-    controlSnake(event.keyCode);
-}
-
-function controlSnake(keyCode){
-    switch (keyCode) {
-        case 37: // Left
-            if( direction == "right") return;
-            direction = "left";
-            velocityX = -velocity;
-            velocityY = 0;
-            break;
-        case 38: // up
-            if( direction == "down") return;
-            direction = "up";
-            velocityX = 0;
-            velocityY = -velocity;
-            break;
-        case 39: // right
-            if( direction == "left") return;
-            direction = "right";
-            velocityX = velocity;
-            velocityY = 0;
-            break;
-        case 40: // down
-            if( direction == "up") return;
-            direction = "down";
-            velocityX = 0;
-            velocityY = velocity;
-            break;          
-        default:
-            
-            break;
-    }
-}
+// Inicializar o jogo
+const game = new SnakeGame();

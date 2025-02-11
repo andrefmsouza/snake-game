@@ -1,37 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Snake Game - Um jogo clássico da cobrinha desenvolvido com JavaScript puro" />
+        <meta name="theme-color" content="#293345" />
         
-        <title>Snake Game</title>
-        <link rel="stylesheet" href="./styles.css" />
+        <title>Snake Game | Portfolio</title>
+        <link rel="stylesheet" href="./styles.css" cache-control="no-cache" />
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="./favicon.png" />
     </head>
     <body>
+        <header>
+            <h1>Snake Game</h1>
+            <nav>
+                <a href="http://github.com/andrefmsouza/snake-game/" target="_blank" rel="noopener noreferrer">
+                    Ver no GitHub
+                </a>
+            </nav>
+        </header>
 
-        <h1>Snake Game</h1>
-        <a href="http://github.com/andrefmsouza/snake-game/">http://github.com/andrefmsouza/snake-game/</a>
-
-        <div class="game">
-            <div>
+        <main class="game-container">
+            <section class="canvas-wrapper">
                 <canvas id="stage"></canvas>
-            </div>
+            </section>
     
-            <div>
-                <br/>
-                <button onclick="controlSnake(38)">Up</button>
-        
-                <br/>
-                <button onclick="controlSnake(37)">Left</button>
-                <button onclick="start()">Restart</button>
-                <button onclick="controlSnake(39)">Right</button>
-        
-                <br/>
-                <button onclick="controlSnake(40)">Down</button>
-            </div>
-        </div>
+            <section class="controls">
+                <div class="controls-grid">
+                    <button aria-label="Mover para cima" class="control-btn" data-direction="up">↑</button>
+                    <button aria-label="Mover para esquerda" class="control-btn" data-direction="left">←</button>
+                    <button aria-label="Mover para direita" class="control-btn" data-direction="right">→</button>
+                    <button aria-label="Mover para baixo" class="control-btn" data-direction="down">↓</button>
+                </div>
+                <button aria-label="Reiniciar jogo" class="control-btn restart-btn" data-action="restart">↺</button>
+            </section>
+        </main>
 
+        <footer>
+            <p>Desenvolvido por <a href="https://github.com/andrefmsouza" target="_blank" rel="noopener noreferrer">André Souza</a></p>
+        </footer>
 
-        <script src="./script.js"></script>
+        <script src="./script.js" cache-control="no-cache"></script>
     </body>
 </html>
